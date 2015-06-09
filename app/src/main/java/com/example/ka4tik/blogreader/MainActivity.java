@@ -12,7 +12,10 @@ import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
@@ -42,11 +45,15 @@ public class MainActivity extends ListActivity {
     public static final int NUMBER_OF_POSTS = 20;
     public static final String TAG = MainActivity.class.getSimpleName();
     protected JSONObject mBlogData;
+    protected ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mProgressBar.setVisibility(View.VISIBLE);
 
         if(isNetworkAvailable()) {
             GetBlogPostTask getBlogPostTask = new GetBlogPostTask();
@@ -68,6 +75,8 @@ public class MainActivity extends ListActivity {
 
     }
     private void updateList() {
+        mProgressBar.setVisibility(View.INVISIBLE);
+
         if(mBlogData == null){
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -76,6 +85,9 @@ public class MainActivity extends ListActivity {
             builder.setPositiveButton(android.R.string.ok,null);
             AlertDialog dialog = builder.create();
             dialog.show();
+
+            TextView emptyTextView = (TextView) getListView().getEmptyView();
+            emptyTextView.setText("No items to display");
         }
         else
         {
